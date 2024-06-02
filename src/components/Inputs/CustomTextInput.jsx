@@ -10,7 +10,8 @@ const CustomTextInput = ({
   name,
   errors,
   message,
-  my
+  my,
+  isFull = true
 }) => {
   return (
     <>
@@ -24,6 +25,7 @@ const CustomTextInput = ({
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
+            style={{ width: isFull ? "100%" : '47%' }}
           />
         )}
         name={name}
