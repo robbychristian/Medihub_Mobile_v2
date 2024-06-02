@@ -9,7 +9,7 @@ const WelcomePage = () => {
     <View
       style={{justifyContent: 'center', alignItems: 'center', height: '100%'}}>
       <View style={{width: '90%', marginTop: 250}}>
-        <Button style={{marginVertical: 10}}>LOGIN</Button>
+        <Button style={{marginVertical: 10}} onPress={() => navigation.navigate('Login')}>LOGIN</Button>
         <Button style={{marginVertical: 10}} onPress={() => navigation.navigate('Register')}>REGISTER</Button>
       </View>
     </View>

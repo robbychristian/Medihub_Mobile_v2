@@ -5,39 +5,74 @@ import { View, ScrollView, TouchableOpacity, Image } from "react-native";
 import CustomTextInput from "../../components/Inputs/CustomTextInput";
 import * as DocumentPicker from "expo-document-picker";
 import { Toast } from "toastify-react-native";
+import { registerUser } from "../../store/auth/User";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 const Register = () => {
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
   const [page, setPage] = useState(1);
-  const [fileUpload, setFileUpload] = useState(null);
+  const [fileUpload, setFileUpload] = useState(null)
+  const [displayFileUpload, setDisplayFileUpload] = useState(null);
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const formdata = new FormData();
   const onSubmitPage1 = (data) => {
     console.log(data);
-    formdata.append("first_name", data.first_name);
-    formdata.append("last_name", data.last_name);
-    formdata.append("email", data.email);
-    formdata.append("username", data.username);
-    formdata.append("password", data.password);
-    formdata.append("password_confirmation", data.password_confirmation);
+    // formdata.append("first_name", data.first_name);
+    // formdata.append("last_name", data.last_name);
+    // formdata.append("email", data.email);
+    // formdata.append("username", data.username);
+    // formdata.append("password", data.password);
+    // formdata.append("password_confirmation", data.password_confirmation);
     setPage(2)
   };
   const onSubmitPage2 = (data) => {
     console.log(data);
-    formdata.append("contact_no", data.contact_no);
-    formdata.append("address", data.address);
-    formdata.append("barangay", data.barangay);
-    formdata.append("gender", data.gender);
-    formdata.append("qcitizen_id", data.qcitizen_id);
+    // formdata.append("contact_no", data.contact_no);
+    // formdata.append("address", data.address);
+    // formdata.append("barangay", data.barangay);
+    // formdata.append("gender", data.gender);
+    // formdata.append("qcitizen_id", data.qcitizen_id);
     setPage(3)
   };
 
-  const onSubmitPage3 = (data) => {
-    if (fileUpload == null) {
-      Toast.error("Please upload your ID");
+  const onSubmitPage3 = async (data) => {
+    console.log(fileUpload)
+    const formdata = new FormData()
+    const newFile = {
+      uri: fileUpload.uri,
+      type: "multipart/form-data",
+      name: fileUpload.name,
+    };
+    formdata.append('first_name', data.first_name)
+    formdata.append('last_name', data.last_name)
+    formdata.append('email', data.email)
+    formdata.append('username', data.username)
+    formdata.append('password', data.password)
+    formdata.append('password_confirmation', data.password_confirmation)
+    formdata.append('contact_number', data.contact_no)
+    formdata.append('address', data.address)
+    formdata.append('barangay', data.barangay)
+    formdata.append('gender', data.gender)
+    formdata.append('birthday', data.birthday)
+    formdata.append('qcitizen_id', data.qcitizen_id)
+    formdata.append('uploaded_id', newFile)
+
+    try {
+      const response = await dispatch(registerUser(formdata))
+      if (response.type == "auth/register/fulfilled") {
+        Toast.success("Account has been registered!")
+        navigation.navigate('Login')
+      } else {
+        Toast.error("There was an error registering your account")
+      }
+    } catch(err) {
+      console.log(err)
+      Toast.error("There was an error registering your account")
     }
   };
 
@@ -58,7 +93,8 @@ const Register = () => {
 
   const uploadFile = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
-    console.log(result.uri);
+    setFileUpload(result.assets[0])
+    setDisplayFileUpload(result.assets[0].uri)
   };
 
   return (
@@ -77,6 +113,7 @@ const Register = () => {
               our application!
             </Text>
             {page == 1 ? (
+              <>
               <View style={{ marginVertical: 20 }}>
                 <CustomTextInput
                   control={control}
@@ -135,7 +172,6 @@ const Register = () => {
                   my={5}
                 />
               </View>
-            ) : page == 2 ? (
               <View style={{ marginVertical: 20 }}>
                 <CustomTextInput
                   control={control}
@@ -192,6 +228,7 @@ const Register = () => {
                   my={5}
                 />
               </View>
+              </>
             ) : (
               <View style={{ marginVertical: 20 }}>
                 <TouchableOpacity
@@ -200,13 +237,22 @@ const Register = () => {
                     borderWidth: 1,
                     borderColor: "#ddd",
                     borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: "center"
                   }}
                   onPress={uploadFile}
                 >
-                  <Image />
+                  {displayFileUpload !== null ? (
+                    <Image source={{ uri: displayFileUpload }} style={{ height: '100%', width: '100%' }} />
+                  ) : (
+                    <Text appearance="hint">
+                      Upload your image here
+                    </Text>
+                  )}
                 </TouchableOpacity>
               </View>
             )}
+              
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
             >
@@ -218,15 +264,11 @@ const Register = () => {
                 <View></View>
               )}
               {page == 1 ? (
-                <Button onPress={handleSubmit(onSubmitPage1)}>
-                Next
-              </Button>
-              ) : page == 2 ? (
-                <Button onPress={handleSubmit(onSubmitPage2)}>
+                <Button onPress={onSubmitPage1}>
                 Next
               </Button>
               ) : (
-                <Button onPress={onSubmitPage3}>
+                <Button onPress={handleSubmit(onSubmitPage3)}>
                 Register
               </Button>
               )}
