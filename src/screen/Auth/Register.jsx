@@ -173,6 +173,10 @@ const Register = () => {
                 />
               </View>
               <View style={{ marginVertical: 20 }}>
+              <Text category="h4">Your Personal Information!</Text>
+            <Text category="p2" appearance="hint">
+              Your personal information will serve as our reference to your requests!
+            </Text>
                 <CustomTextInput
                   control={control}
                   errors={errors}
