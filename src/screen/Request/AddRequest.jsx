@@ -14,8 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addMedicineRequest } from "../../store/requests/Requests";
 
 const AddRequest = () => {
-    const dispatch = useDispatch()
-    const {user} = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.auth)
   const options = ["1:Health Care", "2:Health Care 2"];
   const navigation = useNavigation();
   const [selectedHealthCare, setSelectedHealthCare] = useState("");
@@ -33,54 +33,59 @@ const AddRequest = () => {
   });
 
   const onSubmit = async (data) => {
-    if (prescription == null) {
+    if (data.medicine.length == 0) {
+      Toast.error("Please add atleast 1 medicine!");
+    } else if (prescription == null) {
       Toast.error("Please upload your prescription");
     } else {
-        const formdata = new FormData()
-        const newFile = {
-            uri: prescription.uri,
-            type: "multipart/form-data",
-            name: prescription.name,
-          };
-        const healthCare = data.health_care
-        const healthCareId = healthCare.split(':')
-        formdata.append('health_care', healthCareId[0])
-        formdata.append('prescription_image', newFile)
-        formdata.append('medicine', data.medicine)
-        
-        try {
-            const response = await dispatch(addMedicineRequest(formdata))
-            if (response.type == 'requests/addmedicinerequest/fulfilled') {
-                Toast.success("Request has been submitted!")
-                navigation.goBack()
-            } else {
-                Toast.error("There was an error submitting your request!")
-            }
-        } catch(err) {
-            console.log(err)
-            Toast.error("There was an error submitting your request!")
+      // console.log(data.medicine)
+      const formdata = new FormData()
+      const newFile = {
+        uri: prescription.uri,
+        type: "multipart/form-data",
+        name: prescription.name,
+      };
+      const healthCare = data.health_care
+      const healthCareId = healthCare.split(':')
+      formdata.append('health_care', healthCareId[0])
+      formdata.append('prescription_image', newFile)
+      formdata.append('medicine', JSON.stringify(data.medicine));
+      formdata.append('user_id', user.id);
+
+      try {
+        const response = await dispatch(addMedicineRequest(formdata))
+        if (response.type == 'requests/addmedicinerequest/fulfilled') {
+          // console.log(`eto yung response ${response.data}}`)
+          Toast.success("Request has been submitted!")
+          navigation.goBack()
+        } else {
+          Toast.error("There was an error submitting your request!")
         }
+      } catch (err) {
+        console.log(err)
+        Toast.error("There was an error submitting your request!")
+      }
     }
   };
 
   useEffect(() => {
     console.log(user)
     api
-    .get("healthcarecenter/getallhealthcares")
-    .then((response) => {
+      .get("healthcarecenter/getallhealthcares")
+      .then((response) => {
         const hc = response.data;
         let temp = [];
         hc.map((item) => {
-            temp.push(`${item.id}:${item.health_care_name}`);
+          temp.push(`${item.id}:${item.health_care_name}`);
         });
         console.log(temp);
         setHealthCares(temp);
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         console.log(err.response);
-    });
+      });
     const unsubscribe = navigation.addListener("focus", () => {
-        console.log(user)
+      console.log(user)
       api
         .get("healthcarecenter/getallhealthcares")
         .then((response) => {
@@ -144,76 +149,76 @@ const AddRequest = () => {
             />
             {fields.length > 0
               ? fields.map((item, index) => (
-                  <View style={{ marginTop: 10 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text style={{ fontWeight: "700" }}>
-                        Medicine {index + 1}
-                      </Text>
-                      <TouchableOpacity onPress={() => remove(index)}>
-                        <Text category="label" status="danger">Remove</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        justifyContent: "space-between",
-                        flexDirection: "row",
-                      }}
-                    >
-                      <CustomTextInput
-                        control={control}
-                        rules={{ required: true }}
-                        name={`medicine.${index}.medicine_name`}
-                        errors={errors}
-                        label={`Medicine Name`}
-                        message={`Medicine Name is required`}
-                        isFull={false}
-                        my={5}
-                      />
-                      <CustomTextInput
-                        control={control}
-                        rules={{ required: true }}
-                        name={`medicine.${index}.medicine_brand_name`}
-                        errors={errors}
-                        label={`Medicine Brand Name`}
-                        isFull={false}
-                        message={`Medicine Brand Name is required`}
-                        my={5}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        justifyContent: "space-between",
-                        flexDirection: "row",
-                      }}
-                    >
-                      <CustomTextInput
-                        control={control}
-                        rules={{ required: true }}
-                        name={`medicine.${index}.medicine_dose`}
-                        errors={errors}
-                        label={`Medicine Dose`}
-                        isFull={false}
-                        message={`Medicine Dose is required`}
-                        my={5}
-                      />
-                      <CustomTextInput
-                        control={control}
-                        rules={{ required: true }}
-                        name={`medicine.${index}.medicine_quantity`}
-                        errors={errors}
-                        label={`Medicine Quantity`}
-                        isFull={false}
-                        message={`Medicine Quantity is required`}
-                        my={5}
-                      />
-                    </View>
+                <View style={{ marginTop: 10 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text style={{ fontWeight: "700" }}>
+                      Medicine {index + 1}
+                    </Text>
+                    <TouchableOpacity onPress={() => remove(index)}>
+                      <Text category="label" status="danger">Remove</Text>
+                    </TouchableOpacity>
                   </View>
-                ))
+                  <View
+                    style={{
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <CustomTextInput
+                      control={control}
+                      rules={{ required: true }}
+                      name={`medicine.${index}.medicine_name`}
+                      errors={errors}
+                      label={`Medicine Name`}
+                      message={`Medicine Name is required`}
+                      isFull={false}
+                      my={5}
+                    />
+                    <CustomTextInput
+                      control={control}
+                      rules={{ required: true }}
+                      name={`medicine.${index}.medicine_brand_name`}
+                      errors={errors}
+                      label={`Medicine Brand Name`}
+                      isFull={false}
+                      message={`Medicine Brand Name is required`}
+                      my={5}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <CustomTextInput
+                      control={control}
+                      rules={{ required: true }}
+                      name={`medicine.${index}.medicine_dose`}
+                      errors={errors}
+                      label={`Medicine Dose`}
+                      isFull={false}
+                      message={`Medicine Dose is required`}
+                      my={5}
+                    />
+                    <CustomTextInput
+                      control={control}
+                      rules={{ required: true }}
+                      name={`medicine.${index}.medicine_quantity`}
+                      errors={errors}
+                      label={`Medicine Quantity`}
+                      isFull={false}
+                      message={`Medicine Quantity is required`}
+                      my={5}
+                    />
+                  </View>
+                </View>
+              ))
               : null}
             <View style={{ marginTop: 10 }}>
               <Button onPress={uploadFile}>
@@ -237,13 +242,6 @@ const AddRequest = () => {
       >
         <FormButtons
           buttonColor={"#009688"}
-          text={"ADD REQUEST"}
-          textColor={"#fff"}
-          onPress={handleSubmit(onSubmit)}
-          my={4}
-        />
-        <FormButtons
-          buttonColor={"#009688"}
           text={"ADD MEDICINE"}
           textColor={"#fff"}
           onPress={() => {
@@ -256,6 +254,14 @@ const AddRequest = () => {
           }}
           my={4}
         />
+        <FormButtons
+          buttonColor={"#009688"}
+          text={"ADD REQUEST"}
+          textColor={"#fff"}
+          onPress={handleSubmit(onSubmit)}
+          my={4}
+        />
+
         <FormButtons
           buttonColor={"#fff"}
           text={`CANCEL`}
