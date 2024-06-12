@@ -2,18 +2,18 @@ import { Card, Text } from "@ui-kitten/components";
 import React from "react";
 import { View } from "react-native";
 
-const RequestCard = ({ id, name, }) => {
+const RequestCard = ({ item }) => {
   return (
-    <Card disabled>
+    <Card disabled style={{ width: '100%' }}>
       <Text category="h5" style={{ color: "#0284C7" }}>
-        Document Type: {docType}
+        Reference #: {item.order_reference}
       </Text>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text category="label">ID: {id}</Text>
-        <Text category="label">Name: {name}</Text>
+        <Text category="label">Name: {item.user.first_name} {item.user.last_name}</Text>
+        <Text category="label">Status: {item.order_status}</Text>
       </View>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text category="label">Email: {email}</Text>
+        <Text category="label">Total Quantity: {item.order_quantity}</Text>
       </View>
     </Card>
   );

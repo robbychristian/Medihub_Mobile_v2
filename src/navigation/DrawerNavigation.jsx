@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { Drawer, DrawerItem, IndexPath } from "@ui-kitten/components";
 import Request from "../screen/Request/Request";
 import AddRequest from "../screen/Request/AddRequest";
+import Scanner from "../screen/Request/Scanner";
 
 const DrawerStack = createDrawerNavigator();
 
@@ -15,8 +16,7 @@ const DrawerContent = ({ navigation, state }) => {
     <Drawer
       selectedIndex={new IndexPath(state.index)}
       onSelect={(index) => {
-        navigation.navigate(state.routeNames[index.row]);
-        if (index != 6) {
+        if (index != 4) {
           navigation.navigate(state.routeNames[index.row]);
         }
       }}
@@ -24,6 +24,7 @@ const DrawerContent = ({ navigation, state }) => {
     >
       <DrawerItem title={`Home`} />
       <DrawerItem title={`Requests`} />
+      <DrawerItem title={`Scanner`} />
       <DrawerItem
         title={`Logout`}
         onPress={async () => {
@@ -61,6 +62,11 @@ const DrawerNavigation = () => {
         component={Request}
         options={{ headerTitle: "REQUESTS", headerTitleAlign: "center" }}
       />
+        <DrawerStack.Screen
+          name="Scanner"
+          component={Scanner}
+          options={{ headerTitle: "SCANNER", headerTitleAlign: "center" }}
+        />
       <DrawerStack.Screen
         name="AddRequests"
         component={AddRequest}
