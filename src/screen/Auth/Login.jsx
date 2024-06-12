@@ -8,6 +8,7 @@ import CustomTextInput from '../../components/Inputs/CustomTextInput';
 import {useForm} from 'react-hook-form';
 import { loginUser } from '../../store/auth/User';
 import { api } from '../../../config/api';
+import { Toast } from 'toastify-react-native';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -32,8 +33,10 @@ const Login = () => {
     //   })
     try {
         const response = await dispatch(loginUser(inputs))
-        if (response.type == "auth/login/fulfilled") {
-            navigation.navigate('DrawerStack')
+        if(response.payload == 'error') {
+          Toast.error("Credentials do not exist!")
+        } else {
+          navigation.navigate('DrawerStack')
         }
     } catch (err) {
         console.log(err)
