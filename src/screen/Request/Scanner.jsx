@@ -1,7 +1,7 @@
 import { BarCodeScanner } from "expo-barcode-scanner";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Text } from "@ui-kitten/components";
+import { Text, Button } from "@ui-kitten/components";
 
 const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
