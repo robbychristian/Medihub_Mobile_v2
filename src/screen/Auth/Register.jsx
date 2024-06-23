@@ -8,6 +8,8 @@ import { Toast } from "toastify-react-native";
 import { registerUser } from "../../store/auth/User";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import CustomDatePicker from '../../components/Inputs/CustomDatePicker'
+import moment from "moment";
 
 const Register = () => {
   const dispatch = useDispatch()
@@ -58,7 +60,7 @@ const Register = () => {
     formdata.append('address', data.address)
     formdata.append('barangay', data.barangay)
     formdata.append('gender', data.gender)
-    formdata.append('birthday', data.birthday)
+    formdata.append('birthday', moment(data.birthday).format('YYYY-MM-DD'))
     formdata.append('qcitizen_id', data.qcitizen_id)
     formdata.append('uploaded_id', newFile)
 
@@ -213,15 +215,15 @@ const Register = () => {
                   message={`Gender is required!`}
                   my={5}
                 />
-                <CustomTextInput
-                  control={control}
-                  errors={errors}
-                  label={`Birthday`}
-                  name={"birthday"}
-                  rules={{ required: true }}
-                  message={`Birthday is required!`}
-                  my={5}
-                />
+                <CustomDatePicker
+              control={control}
+              errors={errors}
+              label={`Birthday`}
+              message={`Birthday is required`}
+              my={5}
+              name={`birthday`}
+              rules={{ required: true }}
+            />
                 <CustomTextInput
                   control={control}
                   errors={errors}

@@ -1,9 +1,13 @@
 import { BarCodeScanner } from "expo-barcode-scanner";
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, Button } from "@ui-kitten/components";
+import { View, StyleSheet, Button  } from "react-native";
+import { Text } from "@ui-kitten/components";
+import { useNavigation } from "@react-navigation/native";
+import Loading from "../../components/Loading";
 
 const Scanner = () => {
+  const navigation = useNavigation()
+  const [loading, setLoading] = useState(false)
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
@@ -18,7 +22,12 @@ const Scanner = () => {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    setLoading(true)
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    navigation.navigate('ViewRequest', {
+      data: data
+    })
+    setLoading(false)
   };
 
   if (hasPermission === null) {
@@ -28,10 +37,11 @@ const Scanner = () => {
     return <Text>No access to camera</Text>;
   }
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ height: "100%" }}>
+      <Loading loading={loading} />
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
+        style={[StyleSheet.absoluteFillObject, {height: "100%"}]}
       />
       {scanned && (
         <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />

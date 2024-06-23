@@ -35,6 +35,7 @@ const Login = () => {
         const response = await dispatch(loginUser(inputs))
         if(response.payload == 'error') {
           Toast.error("Credentials do not exist!")
+          console.log(response.payload)
         } else {
           navigation.navigate('DrawerStack')
         }

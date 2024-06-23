@@ -2,27 +2,39 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import Home from "../screen/Home";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Drawer, DrawerItem, IndexPath } from "@ui-kitten/components";
 import Request from "../screen/Request/Request";
 import AddRequest from "../screen/Request/AddRequest";
 import Scanner from "../screen/Request/Scanner";
+import Inventory from "../screen/Inventory/Inventory";
+import ViewRequest from "../screen/Request/ViewRequest";
 
 const DrawerStack = createDrawerNavigator();
 
 const DrawerContent = ({ navigation, state }) => {
+  const {user} = useSelector(state => state.auth)
   const dispatch = useDispatch();
   return (
     <Drawer
       selectedIndex={new IndexPath(state.index)}
       onSelect={(index) => {
-        if (index != 4) {
-          navigation.navigate(state.routeNames[index.row]);
+        if (user.user_role == 2) {
+          if (index != 5) {
+            navigation.navigate(state.routeNames[index.row]);
+          }
+        } else {
+          if (index != 4) {
+            navigation.navigate(state.routeNames[index.row]);
+          }
         }
       }}
       style={{ marginTop: 50 }}
     >
       <DrawerItem title={`Home`} />
+      {user.user_role == 2 && (
+      <DrawerItem title={`Inventory`} />
+      )}
       <DrawerItem title={`Requests`} />
       <DrawerItem title={`Scanner`} />
       <DrawerItem
@@ -38,6 +50,7 @@ const DrawerContent = ({ navigation, state }) => {
 
 const DrawerNavigation = () => {
   const navigation = useNavigation();
+  const {user} = useSelector(state => state.auth)
   const route = useRoute();
 
   return (
@@ -57,6 +70,13 @@ const DrawerNavigation = () => {
         component={Home}
         options={{ headerTitle: "DASHBOARD", headerTitleAlign: "center" }}
       />
+      {user.user_role == 2 && (
+        <DrawerStack.Screen
+          name="Inventory"
+          component={Inventory}
+          options={{ headerTitle: "INVENTORY", headerTitleAlign: "center" }}
+        />
+      )}
       <DrawerStack.Screen
         name="Requests"
         component={Request}
@@ -71,6 +91,11 @@ const DrawerNavigation = () => {
         name="AddRequests"
         component={AddRequest}
         options={{ headerTitle: "ADD REQUESTS", headerTitleAlign: "center" }}
+      />
+      <DrawerStack.Screen
+        name="ViewRequest"
+        component={ViewRequest}
+        options={{ headerTitle: "VIEW REQUEST", headerTitleAlign: "center" }}
       />
       {/* <DrawerStack.Screen
         name="Services"
